@@ -2,8 +2,10 @@ def agregar_producto(inventario):
     nombre = input("Nombre del producto: ")
     precio = float(input("Precio: "))
     cantidad = int(input("Cantidad: "))
-    # TODO: Crear el diccionario del producto y agregarlo a la lista
-    pass
+    # Crear el diccionario del producto y agregarlo a la lista
+    producto = {"nombre": nombre, "precio": precio, "cantidad": cantidad}
+    inventario.append(producto)
+    print("¡Producto agregado con éxito!")
 
 def mostrar_inventario(inventario):
     if not inventario:
@@ -11,39 +13,59 @@ def mostrar_inventario(inventario):
         return
     print(f"{'Nombre':<20} {'Precio':>10} {'Cantidad':>10}")
     print("-" * 42)
-    # TODO: Recorrer el inventario e imprimir cada producto
-    pass
+    # Recorrer el inventario e imprimir cada producto
+    for p in inventario:
+        print(f"{p['nombre']:<20} ${p['precio']:>9.2f} {p['cantidad']:>10}")
 
 def buscar_producto(inventario, nombre):
-    # TODO: Buscar y retornar el producto cuyo nombre coincida
-    # Retornar None si no se encuentra
-    pass
+    # Buscar y retornar el producto cuyo nombre coincida (ignorando mayúsculas/minúsculas)
+    for producto in inventario:
+        if producto["nombre"].lower() == nombre.lower():
+            return producto
+    return None
 
 def actualizar_cantidad(inventario):
     nombre = input("Nombre del producto: ")
     producto = buscar_producto(inventario, nombre)
     if producto:
         nueva_cantidad = int(input("Nueva cantidad: "))
-        # TODO: Actualizar la cantidad del producto
-        pass
+        # Actualizar la cantidad del producto
+        producto["cantidad"] = nueva_cantidad
+        print("¡Cantidad actualizada con éxito!")
     else:
         print("Producto no encontrado.")
 
 def eliminar_producto(inventario):
     nombre = input("Nombre del producto a eliminar: ")
-    # TODO: Buscar el producto y eliminarlo de la lista
-    # Pista: usa inventario.remove(producto)
-    pass
+    # Buscar el producto y eliminarlo de la lista
+    producto = buscar_producto(inventario, nombre)
+    if producto:
+        inventario.remove(producto)
+        print("¡Producto eliminado con éxito!")
+    else:
+        print("Producto no encontrado.")
 
 def resumen(inventario):
     if not inventario:
         print("Inventario vacío.")
         return
-    # TODO: Calcular e imprimir:
-    # - Total de productos distintos
-    # - Valor total (sum de precio * cantidad)
-    # - Producto más caro y más barato
-    pass
+    
+    # Calcular e imprimir métricas
+    total_distintos = len(inventario)
+    
+    # Sumamos el valor total multiplicando precio * cantidad de cada producto
+    valor_total = sum(p["precio"] * p["cantidad"] for p in inventario)
+    
+    # Encontramos el más caro y el más barato usando la función max() y min()
+    mas_caro = max(inventario, key=lambda x: x["precio"])
+    mas_barato = min(inventario, key=lambda x: x["precio"])
+    
+    print("\n--- RESUMEN DEL INVENTARIO ---")
+    print(f"Total de productos distintos: {total_distintos}")
+    print(f"Valor total del inventario: ${valor_total:.2f}")
+    print(f"Producto más caro: {mas_caro['nombre']} (${mas_caro['precio']:.2f})")
+    print(f"Producto más barato: {mas_barato['nombre']} (${mas_barato['precio']:.2f})")
+    print("------------------------------")
 
 def menu():
     inventario = []
@@ -67,7 +89,8 @@ def menu():
             nombre = input("Nombre a buscar: ")
             producto = buscar_producto(inventario, nombre)
             if producto:
-                print(producto)
+                # Formateamos un poco la salida para que se vea mejor que un simple diccionario
+                print(f"Encontrado - Nombre: {producto['nombre']}, Precio: ${producto['precio']}, Cantidad: {producto['cantidad']}")
             else:
                 print("No encontrado.")
         elif opcion == "4":
@@ -80,6 +103,6 @@ def menu():
             print("¡Hasta luego!")
             break
         else:
-            print("Opción no válida.")
+            print("Opción no válida. Intenta de nuevo.")
 
 menu()
